@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>구글 스프레드시트 H6 값</title>
+  <title>구글 스프레드시트 H6 값</title>
 </head>
 <body>
   <h1>구글 스프레드시트 H6 값:</h1>
@@ -16,8 +16,8 @@
         // CSV 데이터를 행 단위로 나누기
         const rows = data.split('\n');
         
-        // H6 값은 8번째 행, 4번째 열에 위치
-        const h6Value = rows[5].split(',')[7];
+        // H6 값은 8번째 행, 6번째 열에 위치
+        const h6Value = rows[5].split(',')[7];  // H6 값을 가져오기
         
         // H6 값을 HTML에 출력
         document.getElementById('data').innerText = `Google Spreadsheet의 H6값: ${h6Value}`;
