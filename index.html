@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>구글 스프레드시트 D6 값</title>
+</head>
+<body>
+  <h1>구글 스프레드시트 D6 값:</h1>
+  <p id="data">불러오는 중...</p>
+  
+  <script>
+    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
+      .then(response => response.text())
+      .then(data => {
+        // CSV 데이터를 행 단위로 나누기
+        const rows = data.split('\n');
+        
+        // D6 값은 6번째 행, 4번째 열에 위치
+        const d6Value = rows[5].split(',')[3];
+        
+        // D6 값을 HTML에 출력
+        document.getElementById('data').innerText = `Google Spreadsheet의 D6값: ${d6Value}`;
+      })
+      .catch(error => console.error('Error fetching data: ', error));
+  </script>
+</body>
+</html>
