@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>임시</title>
+  <title>데이터 리스트</title>
   <style>
     .data-list {
       list-style-type: none;
@@ -13,13 +13,13 @@
       margin-bottom: 20px;
     }
     img {
-      max-width: 200px; /* 이미지 크기를 제한 */
+      max-width: 200px; /* 이미지 크기 제한 */
       height: auto;
     }
   </style>
 </head>
 <body>
-  <h1>2 휴</h1>
+  <h1>24년도 콘텐츠 리스트</h1>
   <p id="data">불러오는 중...</p>
 
   <ul class="data-list" id="data-list"></ul>
@@ -44,25 +44,30 @@
         for (let i = 1; i < rows.length; i++) {
           const columns = rows[i].split(',');
 
-          // D열: columns[3] 값 (D열 콘텐츠)
-          let dContent = columns[3].trim(); // D열 값 저장
+          // D열: columns[3] 값 (D열 콘텐츠), 값이 없으면 빈 문자열로 처리
+          let dContent = columns[3] ? columns[3].trim() : '';
 
-          // H열: columns[7]부터 시작 (https나 빈칸이 나올 때까지 텍스트 추가)
+          // H열: columns[7]부터 시작 (빈칸 또는 URL이 나올 때까지 텍스트 추가)
           let hContent = '';
           let currentIndex = 7;
-          while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
+          while (currentIndex < columns.length && 
+                 columns[currentIndex] && 
+                 !columns[currentIndex].trim().startsWith('https') && 
+                 columns[currentIndex].trim() !== '') {
             hContent += columns[currentIndex].trim() + ' ';
             currentIndex++;
           }
 
-          // I열: https URL이 나오면 I열에 저장
+          // I열: URL이 나오면 I열에 저장
           let iContent = '';
-          while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('https') || columns[currentIndex].trim() === '')) {
-            iContent = columns[currentIndex].trim();
+          while (currentIndex < columns.length) {
+            const cell = columns[currentIndex] ? columns[currentIndex].trim() : '';
+            if (cell.startsWith('https')) {
+              iContent = cell;
+              break;
+            }
             currentIndex++;
           }
-
-         
 
           // 리스트 항목 생성
           let listItem = document.createElement('li');
@@ -71,11 +76,9 @@
           listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 콘텐츠는 ${hContent.trim()}</p>`;
 
           // I열 URL이나 텍스트 출력 (이미지로 표시)
-          if (iContent.startsWith('https')) {
+          if (iContent) {
             listItem.innerHTML += `<img src="${iContent}" alt="I열 Image">`;
           } 
-
-          
 
           list.appendChild(listItem);
         }
