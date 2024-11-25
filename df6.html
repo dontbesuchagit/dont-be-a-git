@@ -12,10 +12,6 @@
     .data-list li {
       margin-bottom: 20px;
     }
-    .author {
-      color: blue;
-      font-weight: bold;
-    }
     img {
       max-width: 200px; /* 이미지 크기를 제한 */
       height: auto;
@@ -23,12 +19,15 @@
   </style>
 </head>
 <body>
-  <h1>데이터 파싱하는 게 가장 힘들구나2 휴</h1>
+  <h1>2 휴</h1>
   <p id="data">불러오는 중...</p>
 
   <ul class="data-list" id="data-list"></ul>
 
   <script>
+    // 각 항목에 고유한 색상을 지정
+    const colors = ['red', 'blue', 'green', 'purple', 'orange', 'pink', 'yellow', 'brown', 'teal', 'gray'];
+
     fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
       .then(response => response.text())
       .then(data => {
@@ -57,6 +56,7 @@
           }
 
           // I열: https URL이 나오면 I열에 저장
+          let iContent = '';
           while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('https') || columns[currentIndex].trim() === '')) {
             iContent = columns[currentIndex].trim();
             currentIndex++;
@@ -79,27 +79,26 @@
           // 리스트 항목 생성
           let listItem = document.createElement('li');
 
-          // "D열"의 24년도 최고의 콘텐츠는 H열 텍스트 출력
-          listItem.innerHTML += `<p class="author">${dContent}의 24년도 최고의 콘텐츠는 ${hContent.trim()}</p>`;
+          // D열의 24년도 최고의 콘텐츠는 H열 텍스트 출력
+          listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 콘텐츠는 ${hContent.trim()}</p>`;
 
-          
           // I열 URL이나 텍스트 출력 (이미지로 표시)
           if (iContent.startsWith('https')) {
-            listItem.innerHTML += `<p>I열 이미지: <img src="${iContent}" alt="I열 Image"></p>`;
+            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">I열 이미지: <img src="${iContent}" alt="I열 Image"></p>`;
           } else {
-            listItem.innerHTML += `<p>I열 텍스트: ${kContent.trim()}</p>`;
+            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">I열 텍스트: ${kContent.trim()}</p>`;
           }
 
           // J열 텍스트 출력
           if (jContent) {
-            listItem.innerHTML += `<p class="author"> ${dContent}의 24년도 최고의 공간은 ${jContent}</p>`;
+            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};"> ${dContent}의 24년도 최고의 공간은 ${jContent}</p>`;
           }
 
           // K열 URL이나 텍스트 출력 (이미지로 표시)
           if (kContent.startsWith('https')) {
-            listItem.innerHTML += `<p>K열 이미지: <img src="${kContent}" alt="K열 Image"></p>`;
+            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">K열 이미지: <img src="${kContent}" alt="K열 Image"></p>`;
           } else {
-            listItem.innerHTML += `<p>K열 텍스트: ${kContent.trim()}</p>`;
+            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">K열 텍스트: ${kContent.trim()}</p>`;
           }
 
           list.appendChild(listItem);
