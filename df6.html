@@ -3,86 +3,83 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>구글 스프레드시트 값</title>
+  <title>구글 스프레드시트 데이터</title>
   <style>
-    ul {
-      list-style-type: none; /* 불렛포인트 제거 */
+    .data-list {
+      list-style-type: none;
       padding: 0;
-      margin: 0;
     }
-    li {
-      margin: 5px 0;
+    .data-list li {
+      margin-bottom: 10px;
     }
     .author {
-      color: blue; /* 작성자 텍스트 파란색 */
-      font-weight: bold; /* 텍스트 강조 */
-    }
-    img {
-      max-width: 100%; /* 이미지 크기 조정 */
-      height: auto;
-      display: block;
-      margin: 5px 0;
+      color: blue;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>구글 스프레드시트 값</h1>
-  <ul id="data">
-    <li>불러오는 중...</li> <!-- 불러오는 중 기본 값 -->
-  </ul>
-  
+  <h1>구글 스프레드시트 데이터</h1>
+  <p id="data">불러오는 중...</p>
+
+  <ul class="data-list" id="data-list"></ul>
+
   <script>
     fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
       .then(response => response.text())
       .then(data => {
-        const rows = data.split('\n'); // CSV 데이터를 행 단위로 나누기
-        const list = document.getElementById('data'); // 데이터가 들어갈 리스트 요소 선택
+        // CSV 데이터를 행 단위로 나누기
+        const rows = data.split('\n');
 
-        // "불러오는 중..." 메시지 제거
-        while (list.firstChild) {
-          list.removeChild(list.firstChild);
-        }
+        // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
+        let list = document.getElementById('data-list');
+        
+        // "불러오는 중..." 텍스트 제거
+        document.getElementById('data').style.display = 'none';
 
-        // D1:D6, H1:H6, I1:I6 값을 반복적으로 추가 (1부터 시작)
-        for (let i = 1; i < rows.length; i++) {
-          const cells = rows[i].split(','); // 각 행을 쉼표로 나눔
-          const dValue = cells[3]; // D 열 값 (작성자)
-          const hValue = cells[7]; // H 열 값
-          const iValue = cells[8]; // I 열 값 (이미지 URL)
+        // 데이터를 1부터 시작 (헤더는 제외하고)
+        for (let i = 1; i < rows.length - 1; i++) {
+          const columns = rows[i].split(',');
 
-          // 작성자 (D 열 값) 추가
+          // D열 값 (작성자)
+          const dValue = columns[3];  // D열은 4번째 열
+          // H열 값 (글자)
+          const hValue = columns[7];  // H열은 8번째 열
+          // I열 값 (이미지 URL)
+          const iValue = columns[8];  // I열은 9번째 열
+          
+          // D열 (작성자) 리스트 항목 생성
           const listItemD = document.createElement('li');
+          listItemD.classList.add('author');
           listItemD.innerText = `작성자: ${dValue}`;
-          listItemD.classList.add('author'); // 작성자 텍스트에 파란색 클래스 추가
           list.appendChild(listItemD);
 
-          // H 열 값 추가
+          // H열 (글자) 리스트 항목 생성
           const listItemH = document.createElement('li');
-          listItemH.innerText = `${hValue}`;
+          listItemH.innerText = `글자: ${hValue}`;
           list.appendChild(listItemH);
 
-          // I 열 값이 있을 경우 이미지 추가
-          if (iValue && iValue.trim() !== "") {
-            const image = document.createElement('img');
-            image.src = iValue.trim(); // 이미지 URL
-            image.alt = '관련 이미지'; // 대체 텍스트
-            list.appendChild(image);
+          // I열 (이미지) 리스트 항목 생성 (이미지가 있을 경우만 표시)
+          if (iValue) {
+            const listItemI = document.createElement('li');
+            const imgElement = document.createElement('img');
+            imgElement.src = iValue; // I열의 이미지 URL 사용
+            imgElement.alt = '관련 이미지';
+            imgElement.style.maxWidth = '100%';
+            imgElement.style.height = 'auto';
+            
+            listItemI.appendChild(imgElement);
+            list.appendChild(listItemI);
           }
+
+          // F열 값 (숫자)
+          const fValue = columns[5];  // F열은 6번째 열
+          const listItemF = document.createElement('li');
+          listItemF.innerText = `${fValue}`;
+          list.appendChild(listItemF);
         }
       })
-      .catch(error => {
-        // 데이터 로드 실패 시 오류 표시
-        console.error('Error fetching data: ', error);
-
-        // 에러 메시지로 대체
-        const list = document.getElementById('data');
-        while (list.firstChild) {
-          list.removeChild(list.firstChild);
-        }
-        const errorItem = document.createElement('li');
-        errorItem.innerText = '데이터를 불러오는 데 실패했습니다.';
-        list.appendChild(errorItem);
-      });
+      .catch(error => console.error('Error fetching data: ', error));
   </script>
 </body>
 </html>
