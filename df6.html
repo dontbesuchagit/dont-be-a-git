@@ -30,63 +30,68 @@
 
   <script>
     fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
-      .then(response => response.text())
-      .then(data => {
-        // CSV 데이터를 행 단위로 나누기
-        const rows = data.split('\n');
+  .then(response => response.text())
+  .then(data => {
+    // CSV 데이터를 행 단위로 나누기
+    const rows = data.split('\n');
 
-        // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
-        let list = document.getElementById('data-list');
+    // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
+    let list = document.getElementById('data-list');
+    
+    // "불러오는 중..." 텍스트 제거
+    document.getElementById('data').style.display = 'none';
+
+    // 데이터를 1부터 시작 (헤더는 제외하고)
+    for (let i = 1; i < rows.length - 1; i++) {
+      // 콤마(,)가 포함된 값을 처리하기 위해 정규식 사용
+      const columns = rows[i].match(/(?:[^",]+|"(?:[^"]|")*")+/g);
+
+      // D열 값 (작성자)
+      const dValue = columns[3];  // D열은 4번째 열
+      // H열 값 (글자)
+      const hValue = columns[7];  // H열은 8번째 열
+      // I열 값 (이미지 URL)
+      const iValue = columns[8];  // I열은 9번째 열
+
+      // D열 (작성자) 리스트 항목 생성
+      const listItemD = document.createElement('li');
+      listItemD.classList.add('author');
+      listItemD.innerText = `작성자: ${dValue}`;
+      list.appendChild(listItemD);
+
+      // H열 (글자) 리스트 항목 생성
+      const listItemH = document.createElement('li');
+      listItemH.innerText = `글자: ${hValue}`;
+      list.appendChild(listItemH);
+
+      // I열 (이미지) 리스트 항목 생성 (이미지가 있을 경우만 표시)
+      if (iValue && (iValue.startsWith('http') || iValue.startsWith('https'))) {
+        const listItemI = document.createElement('li');
+        const imgElement = document.createElement('img');
+        const decodedURL = decodeURIComponent(iValue); // URL 디코딩 처리
+
+        // URL을 콘솔에 출력
+        console.log("이미지 URL:", decodedURL); // 여기에서 URL이 정상적으로 출력되는지 확인
+
+        // 이미지를 HTML에 표시
+        imgElement.src = decodedURL;
+        imgElement.alt = '관련 이미지';
         
-        // "불러오는 중..." 텍스트 제거
-        document.getElementById('data').style.display = 'none';
+        listItemI.appendChild(imgElement);
+        list.appendChild(listItemI);
 
-        // 데이터를 1부터 시작 (헤더는 제외하고)
-        for (let i = 1; i < rows.length - 1; i++) {
-          const columns = rows[i].split(',');
+        // 디버깅용으로 URL을 화면에 표시
+        const urlDisplay = document.createElement('p');
+        urlDisplay.innerText = `이미지 URL: ${decodedURL}`;
+        list.appendChild(urlDisplay);
+      } else {
+        // 만약 URL이 아니면, 그 값을 출력하지 않도록 처리
+        console.log("I열에 URL이 없습니다.");
+      }
+    }
+  })
+  .catch(error => console.error('Error fetching data: ', error));
 
-          // D열 값 (작성자)
-          const dValue = columns[3];  // D열은 4번째 열
-          // H열 값 (글자)
-          const hValue = columns[7];  // H열은 8번째 열
-          // I열 값 (이미지 URL)
-          const iValue = columns[8];  // I열은 9번째 열
-          
-          // D열 (작성자) 리스트 항목 생성
-          const listItemD = document.createElement('li');
-          listItemD.classList.add('author');
-          listItemD.innerText = `작성자: ${dValue}`;
-          list.appendChild(listItemD);
-
-          // H열 (글자) 리스트 항목 생성
-          const listItemH = document.createElement('li');
-          listItemH.innerText = `글자: ${hValue}`;
-          list.appendChild(listItemH);
-
-          // I열 (이미지) 리스트 항목 생성 (이미지가 있을 경우만 표시)
-          if (iValue) {
-            const listItemI = document.createElement('li');
-            const imgElement = document.createElement('img');
-            const decodedURL = decodeURIComponent(iValue); // URL 디코딩 처리
-
-            // URL을 콘솔에 출력
-            console.log("이미지 URL:", decodedURL); // 여기에서 URL이 정상적으로 출력되는지 확인
-
-            // 이미지를 HTML에 표시
-            imgElement.src = decodedURL;
-            imgElement.alt = '관련 이미지';
-            
-            listItemI.appendChild(imgElement);
-            list.appendChild(listItemI);
-
-            // 디버깅용으로 URL을 화면에 표시
-            const urlDisplay = document.createElement('p');
-            urlDisplay.innerText = `이미지 URL: ${decodedURL}`;
-            list.appendChild(urlDisplay);
-          }
-        }
-      })
-      .catch(error => console.error('Error fetching data: ', error));
   </script>
 </body>
 </html>
