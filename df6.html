@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ttt</title>
+  <title>t터</title>
   <style>
     .data-list {
       list-style-type: none;
@@ -76,21 +76,24 @@
           // 리스트 항목 생성
           let listItem = document.createElement('li');
 
-          // D열 (column[3]) 값 출력
-          listItem.innerHTML += `<p class="author">D열: ${dContent}</p>`;
+          // "D열"의 24년도 최고의 콘텐츠는 D열 콘텐츠 출력
+          listItem.innerHTML += `<p class="author">${dContent}의 24년도 최고의 콘텐츠는</p>`;
 
           // H열 텍스트 출력
-          listItem.innerHTML += `<p class="author">H열: ${hContent.trim()}</p>`;
+          listItem.innerHTML += `<p>${hContent.trim()}</p>`;
           
-          // I열 URL 출력
+          // I열 URL 출력 (이미지)
           iContent.forEach((url, index) => {
             listItem.innerHTML += `<p>이미지${index + 1} (I열): ${url}</p>`;
           });
 
-          // J열 텍스트 출력
-          listItem.innerHTML += `<p class="author">J열: ${jContent.trim()}</p>`;
+          // "D열"의 24년도 최고의 장소는 D열 콘텐츠 출력
+          listItem.innerHTML += `<p class="author">${dContent}의 24년도 최고의 장소는</p>`;
 
-          // K열 URL 출력
+          // J열 텍스트 출력
+          listItem.innerHTML += `<p>${jContent.trim()}</p>`;
+
+          // K열 URL 출력 (이미지)
           kContent.forEach((url, index) => {
             listItem.innerHTML += `<p>이미지${index + 1} (K열): ${url}</p>`;
           });
