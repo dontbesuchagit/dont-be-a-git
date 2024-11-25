@@ -47,36 +47,40 @@
           const columns = rows[i].split(',');
 
           // H열 (columns[7] -> 8번째 열)
-          let textContent = columns[7].trim();  // H열 텍스트
+          let contentText = columns[7].trim();  // H열 텍스트
 
           // I열 (https로 시작하거나 빈칸일 수 있음)
           let iContent = [];
           let currentIndex = 8;
           while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('http') || columns[currentIndex].trim() === "")) {
-            iContent.push(columns[currentIndex].trim());
+            if (columns[currentIndex].trim().startsWith('http')) {
+              iContent.push(columns[currentIndex].trim());
+            }
             currentIndex++;
           }
 
           // J열 (무조건 텍스트)
-          let jContent = columns[currentIndex].trim();
+          let placeText = columns[currentIndex].trim();
           currentIndex++;  // J열 다음으로 이동
 
           // K열 (https로 시작하거나 빈칸일 수 있음)
           let kContent = [];
           while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('http') || columns[currentIndex].trim() === "")) {
-            kContent.push(columns[currentIndex].trim());
+            if (columns[currentIndex].trim().startsWith('http')) {
+              kContent.push(columns[currentIndex].trim());
+            }
             currentIndex++;
           }
 
           // 24년도 최고의 콘텐츠: H열 + I열
-          let contentHTML = `"${textContent}"`;
+          let contentHTML = `"${contentText}"`;
           if (iContent.length > 0) {
             contentHTML += `, "${iContent.join('", "')}"`;
           }
           contentHTML = `"j"의 24년도 최고의 콘텐츠는 ${contentHTML} 입니다.`;
 
           // 24년도 최고의 장소: J열 + K열
-          let placeHTML = `"${jContent}"`;
+          let placeHTML = `"${placeText}"`;
           if (kContent.length > 0) {
             placeHTML += `, "${kContent.join('", "')}"`;
           }
@@ -85,17 +89,13 @@
           // 이미지를 I열에서 처리
           let imagesHTMLI = '';
           iContent.forEach(url => {
-            if (url.startsWith('http')) {
-              imagesHTMLI += `<img src="${url}" alt="이미지" />`;
-            }
+            imagesHTMLI += `<img src="${url}" alt="이미지" />`;
           });
 
           // 이미지를 K열에서 처리
           let imagesHTMLK = '';
           kContent.forEach(url => {
-            if (url.startsWith('http')) {
-              imagesHTMLK += `<img src="${url}" alt="이미지" />`;
-            }
+            imagesHTMLK += `<img src="${url}" alt="이미지" />`;
           });
 
           // 리스트 항목 생성
