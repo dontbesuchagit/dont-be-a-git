@@ -71,16 +71,16 @@
           // 24년도 최고의 콘텐츠: H열 + I열
           let contentHTML = `"${textContent}"`;
           if (iContent.length > 0) {
-            contentHTML += ", " + iContent.join(", ");
+            contentHTML += `, "${iContent.join('", "')}"`;
           }
-          contentHTML = `"j"의 24년도 최고의 콘텐츠는 "${contentHTML}" 입니다.`;
+          contentHTML = `"j"의 24년도 최고의 콘텐츠는 ${contentHTML} 입니다.`;
 
           // 24년도 최고의 장소: J열 + K열
           let placeHTML = `"${jContent}"`;
           if (kContent.length > 0) {
-            placeHTML += ", " + kContent.join(", ");
+            placeHTML += `, "${kContent.join('", "')}"`;
           }
-          placeHTML = `"j"의 24년도 최고의 장소는 "${placeHTML}" 입니다.`;
+          placeHTML = `"j"의 24년도 최고의 장소는 ${placeHTML} 입니다.`;
 
           // 이미지를 I열에서 처리
           let imagesHTMLI = '';
