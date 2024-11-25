@@ -16,6 +16,10 @@
       color: blue;
       font-weight: bold;
     }
+    img {
+      max-width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 <body>
@@ -63,20 +67,12 @@
           if (iValue) {
             const listItemI = document.createElement('li');
             const imgElement = document.createElement('img');
-            imgElement.src = iValue; // I열의 이미지 URL 사용
+            imgElement.src = decodeURIComponent(iValue); // URL에서 특수문자 해석
             imgElement.alt = '관련 이미지';
-            imgElement.style.maxWidth = '100%';
-            imgElement.style.height = 'auto';
             
             listItemI.appendChild(imgElement);
             list.appendChild(listItemI);
           }
-
-          // F열 값 (숫자)
-          const fValue = columns[5];  // F열은 6번째 열
-          const listItemF = document.createElement('li');
-          listItemF.innerText = `${fValue}`;
-          list.appendChild(listItemF);
         }
       })
       .catch(error => console.error('Error fetching data: ', error));
