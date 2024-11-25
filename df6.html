@@ -75,14 +75,6 @@
           }
           contentHTML = `"j"의 24년도 최고의 콘텐츠는 "${contentHTML}" 입니다.`;
 
-          // 이미지 URL이 있을 경우, 이미지를 출력
-          let imagesHTML = '';
-          iContent.forEach(url => {
-            if (url.startsWith('http')) {
-              imagesHTML += `<img src="${url}" alt="이미지" />`;
-            }
-          });
-
           // 24년도 최고의 장소: J열 + K열
           let placeHTML = `"${jContent}"`;
           if (kContent.length > 0) {
@@ -90,13 +82,29 @@
           }
           placeHTML = `"j"의 24년도 최고의 장소는 "${placeHTML}" 입니다.`;
 
+          // 이미지를 I열에서 처리
+          let imagesHTMLI = '';
+          iContent.forEach(url => {
+            if (url.startsWith('http')) {
+              imagesHTMLI += `<img src="${url}" alt="이미지" />`;
+            }
+          });
+
+          // 이미지를 K열에서 처리
+          let imagesHTMLK = '';
+          kContent.forEach(url => {
+            if (url.startsWith('http')) {
+              imagesHTMLK += `<img src="${url}" alt="이미지" />`;
+            }
+          });
+
           // 리스트 항목 생성
           let listItem = document.createElement('li');
           listItem.innerHTML = `
             <p class="author">${contentHTML}</p>
-            ${imagesHTML}
+            ${imagesHTMLI} <!-- I열에서 이미지 출력 -->
             <p class="author">${placeHTML}</p>
-            ${imagesHTML} <!-- 두 번째 이미지 출력 -->
+            ${imagesHTMLK} <!-- K열에서 이미지 출력 -->
           `;
           list.appendChild(listItem);
         }
