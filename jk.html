@@ -28,10 +28,10 @@
     // 각 항목에 고유한 색상을 지정
     const colors = ['yellow', 'red', 'blue', 'green', 'purple', 'orange', 'pink', 'brown', 'teal', 'gray', 'black'];
 
-    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
+    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=tsv')
       .then(response => response.text())
       .then(data => {
-        // CSV 데이터를 행 단위로 나누기
+        // TSV 데이터를 행 단위로 나누기
         const rows = data.split('\n');
 
         // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
@@ -42,44 +42,43 @@
 
         // 데이터를 1부터 시작 (헤더는 제외하고)
         for (let i = 1; i < rows.length; i++) {
-          const columns = rows[i].split(',');
+          const columns = rows[i].split('\t');
 
           // D열: columns[3] 값 (D열 콘텐츠)
-          let dContent = columns[3].trim(); // D열 값 저장
+          let dContent = columns[3]?.trim(); // D열 값 저장
 
           // H열: columns[7]부터 시작 (https나 빈칸이 나올 때까지 텍스트 추가)
           let hContent = '';
           let currentIndex = 7;
-          while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
-            hContent += columns[currentIndex].trim() + ' ';
+          while (currentIndex < columns.length && !columns[currentIndex]?.trim().startsWith('https') && columns[currentIndex]?.trim() !== '') {
+            hContent += columns[currentIndex]?.trim() + ' ';
             currentIndex++;
           }
 
           // I열: https URL이 나오면 I열에 저장
           let iContent = '';
-          while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('https') || columns[currentIndex].trim() === '')) {
-            iContent = columns[currentIndex].trim();
+          while (currentIndex < columns.length && (columns[currentIndex]?.trim().startsWith('https') || columns[currentIndex]?.trim() === '')) {
+            iContent = columns[currentIndex]?.trim();
             currentIndex++;
           }
 
           // J열: I열 URL 이후의 텍스트만 저장
           let jContent = '';
-          while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
-            jContent += columns[currentIndex].trim() + ' ';
+          while (currentIndex < columns.length && !columns[currentIndex]?.trim().startsWith('https') && columns[currentIndex]?.trim() !== '') {
+            jContent += columns[currentIndex]?.trim() + ' ';
             currentIndex++;
           }
 
           // K열: J열 텍스트 이후 https URL이나 빈칸이 있으면 그 값 저장
           let kContent = '';
-          while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('https') || columns[currentIndex].trim() === '')) {
-            kContent = columns[currentIndex].trim();
+          while (currentIndex < columns.length && (columns[currentIndex]?.trim().startsWith('https') || columns[currentIndex]?.trim() === '')) {
+            kContent = columns[currentIndex]?.trim();
             currentIndex++;
           }
 
           // 리스트 항목 생성
           let listItem = document.createElement('li');
 
-        
           // J열 텍스트 출력
           if (jContent) {
             listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};"> ${dContent}의 24년도 최고의 공간은 ${jContent}</p>`;
