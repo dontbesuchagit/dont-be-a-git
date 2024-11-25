@@ -67,11 +67,22 @@
           if (iValue) {
             const listItemI = document.createElement('li');
             const imgElement = document.createElement('img');
-            imgElement.src = decodeURIComponent(iValue); // URL에서 특수문자 해석
+            const decodedURL = decodeURIComponent(iValue); // URL 디코딩 처리
+
+            // URL을 콘솔에 출력
+            console.log("이미지 URL:", decodedURL); // 여기에서 URL이 정상적으로 출력되는지 확인
+
+            // 이미지를 HTML에 표시
+            imgElement.src = decodedURL;
             imgElement.alt = '관련 이미지';
             
             listItemI.appendChild(imgElement);
             list.appendChild(listItemI);
+
+            // 디버깅용으로 URL을 화면에 표시
+            const urlDisplay = document.createElement('p');
+            urlDisplay.innerText = `이미지 URL: ${decodedURL}`;
+            list.appendChild(urlDisplay);
           }
         }
       })
