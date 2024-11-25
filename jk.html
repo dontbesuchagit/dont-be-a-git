@@ -75,9 +75,7 @@
           // 리스트 항목 생성
           let listItem = document.createElement('li');
 
-          // D열의 24년도 최고의 콘텐츠는 H열 텍스트 출력
-          listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 콘텐츠는 ${jContent.trim()}</p>`;
-
+        
           // J열 텍스트 출력
           if (jContent) {
             listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 공간은 ${jContent.trim()}</p>`;
