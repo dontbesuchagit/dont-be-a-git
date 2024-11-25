@@ -62,19 +62,7 @@
             currentIndex++;
           }
 
-          // J열: I열 URL 이후의 텍스트만 저장
-          let jContent = '';
-          while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
-            jContent += columns[currentIndex].trim() + ' ';
-            currentIndex++;
-          }
-
-          // K열: J열 텍스트 이후 https URL이나 빈칸이 있으면 그 값 저장
-          let kContent = '';
-          while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('https') || columns[currentIndex].trim() === '')) {
-            kContent = columns[currentIndex].trim();
-            currentIndex++;
-          }
+         
 
           // 리스트 항목 생성
           let listItem = document.createElement('li');
@@ -87,15 +75,7 @@
             listItem.innerHTML += `<img src="${iContent}" alt="I열 Image">`;
           } 
 
-          // J열 텍스트 출력
-          if (jContent) {
-            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};"> ${dContent}의 24년도 최고의 공간은 ${jContent}</p>`;
-          }
-
-          // K열 URL이나 텍스트 출력 (이미지로 표시)
-          if (kContent.startsWith('https')) {
-            listItem.innerHTML += `<img src="${kContent}" alt="K열 Image">`;
-          }
+          
 
           list.appendChild(listItem);
         }
