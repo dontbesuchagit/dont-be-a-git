@@ -26,33 +26,30 @@
 
   <script>
     // 각 항목에 고유한 색상을 지정
-    const colors = ['yellow', 'red', 'blue', 'green', 'purple', 'orange', 'pink', 'brown', 'teal', 'gray'];
+const colors = ['red', 'blue', 'green', 'purple', 'orange', 'pink', 'yellow', 'brown', 'teal', 'gray'];
 
-    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
-      .then(response => response.text())
-      .then(data => {
-        // CSV 데이터를 행 단위로 나누기
-        const rows = data.split('\n');
+fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
+  .then(response => response.text())
+  .then(data => {
+    // CSV 데이터를 행 단위로 나누기
+    const rows = data.split('\n');
+    let list = document.getElementById('data-list');
+    
+    // "불러오는 중..." 텍스트 제거
+    document.getElementById('data').style.display = 'none';
+    
+    // 데이터를 1부터 시작 (헤더는 제외하고)
+    for (let i = 1; i < rows.length; i++) {
+      const columns = rows[i].split(',');
 
-        // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
-        let list = document.getElementById('data-list');
-        
-        // "불러오는 중..." 텍스트 제거
-        document.getElementById('data').style.display = 'none';
+      let dContent = columns[3].trim();  // D열 값 저장
 
-        // 데이터를 1부터 시작 (헤더는 제외하고)
-        for (let i = 1; i < rows.length; i++) {
-          const columns = rows[i].split(',');
-
-          // D열: columns[3] 값 (D열 콘텐츠)
-          let dContent = columns[3].trim(); // D열 값 저장
-
-          // J열: 빈칸이나 URL을 건너뛰고 그 뒤에 텍스트 저장
-          let jContent = '';
-          let currentIndex = 7; // J열은 columns[7]부터 시작
+      // J열: 빈칸이나 URL을 건너뛰고 그 뒤에 텍스트 저장
+      let jContent = '';
+      let currentIndex = 7; // J열은 columns[7]부터 시작
 
       // 빈칸이나 URL을 건너뛰고, 그 후의 텍스트를 jContent에 저장
-          while (currentIndex < columns.length && (columns[currentIndex].trim() === '' || columns[currentIndex].trim().startsWith('http'))) {
+      while (currentIndex < columns.length && (columns[currentIndex].trim() === '' || columns[currentIndex].trim().startsWith('http'))) {
         currentIndex++;
       }
 
@@ -62,33 +59,35 @@
         currentIndex++;
       }
 
-          // K열: 빈칸이나 URL을 찾고 그 다음의 값을 kContent로 저장
-          let kContent = '';
-          if (currentIndex < columns.length && columns[currentIndex].trim().startsWith('https')) {
-            kContent = columns[currentIndex].trim();
-          }
+      // K열: J열 처리 후 빈칸이나 URL을 건너뛰고 그 뒤의 텍스트 저장
+      let kContent = '';
+      while (currentIndex < columns.length && (columns[currentIndex].trim() === '' || columns[currentIndex].trim().startsWith('http'))) {
+        currentIndex++;
+      }
 
-          // 리스트 항목 생성
-          let listItem = document.createElement('li');
+      // K열에 해당하는 데이터 저장
+      while (currentIndex < columns.length && columns[currentIndex].trim() !== '' && !columns[currentIndex].trim().startsWith('http')) {
+        kContent += columns[currentIndex].trim() + ' ';
+        currentIndex++;
+      }
 
+      // 리스트에 출력
+      let listItem = document.createElement('li');
       
-          // J열 텍스트 출력
-          if (jContent) {
-            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 공간은 ${jContent.trim()}</p>`;
-          }
+      // J열 텍스트 출력
+      if (jContent) {
+        listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 공간은 ${jContent.trim()}</p>`;
+      }
 
-          // K열 URL 처리
-          if (kContent.startsWith('https')) {
-            listItem.innerHTML += `<img src="${kContent}" alt="K열 Image">`;
-          } 
+      // K열 URL 처리
+      if (kContent.startsWith('https')) {
+        listItem.innerHTML += `<img src="${kContent}" alt="K열 Image">`;
+      }
 
-          list.appendChild(listItem);
-        }
-      })
-      .catch(error => {
-        document.getElementById('data').textContent = '데이터를 불러오는 중 오류가 발생했습니다.';
-        console.error('Error:', error);
-      });
+      list.appendChild(listItem);
+    }
+  });
+
   </script>
 </body>
 </html>
