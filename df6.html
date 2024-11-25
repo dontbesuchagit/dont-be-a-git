@@ -32,62 +32,61 @@
     fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
       .then(response => response.text())
       .then(data => {
-        const rows = data.split('\n'); // CSV 데이터 라인별로 나누기
+        // CSV 데이터를 행 단위로 나누기
+        const rows = data.split('\n');
+
+        // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
         let list = document.getElementById('data-list');
         
         // "불러오는 중..." 텍스트 제거
         document.getElementById('data').style.display = 'none';
 
         // 데이터를 1부터 시작 (헤더는 제외하고)
-        for (let i = 1; i < rows.length; i++) {
-          const columns = rows[i].split(','); // 각 행을 콤마로 구분
+        for (let i = 1; i < rows.length - 1; i++) {
+          const columns = rows[i].split(',');
 
-          if (columns.length < 11) continue; // 11개 열이 없는 행은 건너뜀
-
-          // 각 열 데이터
-          const userId = columns[0];  // 첫 번째 열
-          const postId = columns[1];  // 두 번째 열
-          const createdAt = columns[2];  // 세 번째 열
-          const author = columns[3];  // 네 번째 열
-          const rating = columns[4];  // 다섯 번째 열
-          const score = columns[5];  // 여섯 번째 열
-          const emptyValue = columns[6];  // 일곱 번째 열
-          let textContent = columns[7];  // 여덟 번째 열 (글자 내용)
-          let imageUrls = [];  // 이미지 URL들
-
-          // i열을 처리하는 부분
-          let j = 8; // i열은 여덟 번째 열부터 시작
-          while (j < columns.length && columns[j] !== "") {
-            if (columns[j].startsWith('http') || columns[j].startsWith('https')) {
-              // https로 시작하면 이미지 URL로 간주
-              imageUrls.push(columns[j]);  // 이미지 URL로 인식
-            } else {
-              // https로 시작하지 않으면 텍스트로 취급하고, columns[7]에 붙여서 저장
-              textContent += ", " + columns[j];
-            }
-            j++;
+          // D열 값 (작성자)
+          const author = columns[3];  // D열은 4번째 열
+          
+          // H열 값 (텍스트) - 반드시 텍스트
+          const textContent = columns[7];  // H열은 8번째 열
+          
+          // I열 값 (이미지 URL)
+          let imageUrls = [];
+          let tempImageUrl = columns[8];  // I열은 9번째 열
+          
+          // I열 값 처리: 빈칸일 경우는 이미지를 추가하지 않음
+          if (tempImageUrl && (tempImageUrl.startsWith('http') || tempImageUrl === '')) {
+            imageUrls.push(tempImageUrl);
           }
 
-          // 리스트 항목 생성
+          // J열 값 (텍스트)
+          const nextTextContent = columns[9];  // J열은 10번째 열
+
+          // K열 값 (이미지 URL)
+          let nextImageUrl = columns[10];  // K열은 11번째 열
+          if (nextImageUrl && (nextImageUrl.startsWith('http') || nextImageUrl === '')) {
+            imageUrls.push(nextImageUrl);
+          }
+
+          // 출력 형식으로 "author", "textContent", "imageUrls" 표시
           const listItem = document.createElement('li');
-          listItem.innerHTML = `
-            <strong>작성자:</strong> ${author}<br>
-            <strong>작성 시간:</strong> ${createdAt}<br>
-            <strong>글 내용:</strong> ${textContent}<br>
-          `;
-          list.appendChild(listItem);
+          
+          // 첫 번째 줄 (H열, I열 이미지)
+          listItem.innerHTML = `"${author}"의 24년도 최고의 콘텐츠는 "${textContent}"<br/>`;
+          imageUrls.forEach(url => {
+            listItem.innerHTML += `<img src="${url}" alt="Image"><br/>`;
+          });
 
-          // 이미지 URL들이 있으면 이미지 추가
-          if (imageUrls.length > 0) {
-            imageUrls.forEach(url => {
-              const imgItem = document.createElement('li');
-              const img = document.createElement('img');
-              img.src = decodeURIComponent(url);
-              img.alt = '이미지';
-              imgItem.appendChild(img);
-              list.appendChild(imgItem);
-            });
+          // 두 번째 줄 (J열, K열 이미지)
+          listItem.innerHTML += `"${author}"의 24년도 최고의 장소는 "${nextTextContent}"<br/>`;
+          if (nextImageUrl) {
+            listItem.innerHTML += `<img src="${nextImageUrl}" alt="Image"><br/>`;
+          } else {
+            listItem.innerHTML += `이미지 없음<br/>`;
           }
+
+          list.appendChild(listItem);
         }
       })
       .catch(error => console.error('Error fetching data: ', error));
