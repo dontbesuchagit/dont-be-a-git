@@ -20,15 +20,15 @@
         const list = document.getElementById('data');
         for (let i = 0; i < 6; i++) { // D1:D6은 0~5번째 행
           const dValue = rows[i].split(',')[3]; // D 열 값 (index 3)
-          const fValue = rows[i].split(',')[5]; // F 열 값 (index 5)
+          const fValue = rows[i].split(',')[7]; // F 열 값 (index 5)
 
           // 리스트에 D, F 값 추가
           const listItemD = document.createElement('li');
-          listItemD.innerText = `D${i + 1}: ${dValue}`;
+          listItemD.innerText = `작성자: ${dValue}`;
           list.appendChild(listItemD);
 
           const listItemF = document.createElement('li');
-          listItemF.innerText = `F${i + 1}: ${fValue}`;
+          listItemF.innerText = `${fValue}`;
           list.appendChild(listItemF);
         }
       })
