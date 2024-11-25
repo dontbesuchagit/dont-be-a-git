@@ -19,7 +19,7 @@
   </style>
 </head>
 <body>
-  <h1>jk 휴</h1>
+  <h1>데이터 파싱하는 게 가장 힘들구나2 휴</h1>
   <p id="data">불러오는 중...</p>
 
   <ul class="data-list" id="data-list"></ul>
@@ -64,12 +64,12 @@
               continue;
             }
 
-            // 첫 번째 텍스트 값부터 jContent에 저장
+            // 첫 번째 텍스트 값부터 jContent에 저장 (새로 시작)
             if (!foundJContent) {
               jContent = currentValue; // 첫 번째 텍스트 값을 jContent에 저장
               foundJContent = true; // jContent 시작
             } else {
-              // 첫 번째 텍스트 이후의 값은 계속 추가
+              // 첫 번째 텍스트 이후의 값도 이어서 저장
               jContent += ' ' + currentValue;
             }
 
@@ -85,7 +85,9 @@
           // 리스트 항목 생성
           let listItem = document.createElement('li');
 
-    
+          // D열의 24년도 최고의 콘텐츠는 H열 텍스트 출력
+          listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 콘텐츠는 ${jContent.trim()}</p>`;
+
           // J열 텍스트 출력
           if (jContent) {
             listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 공간은 ${jContent.trim()}</p>`;
@@ -94,7 +96,9 @@
           // K열 URL 처리
           if (kContent.startsWith('https')) {
             listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">K열 이미지: <img src="${kContent}" alt="K열 Image"></p>`;
-          } 
+          } else {
+            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">K열 텍스트: ${kContent.trim()}</p>`;
+          }
 
           list.appendChild(listItem);
         }
