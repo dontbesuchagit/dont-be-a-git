@@ -47,34 +47,20 @@
           // D열: columns[3] 값 (D열 콘텐츠)
           let dContent = columns[3].trim(); // D열 값 저장
 
-          // H열과 I열 구분 없이, columns[7]부터 시작하여 빈칸이나 URL을 확인
-          let jContent = ''; // jContent 초기화
-          let currentIndex = 7;
+          // J열: 빈칸이나 URL을 건너뛰고 그 뒤에 텍스트 저장
+          let jContent = '';
+          let currentIndex = 7; // J열은 columns[7]부터 시작
 
-          // 빈칸이나 URL을 만날 때까지 값을 버리고 그 이후의 값만 jContent로 저장
-          let foundJContent = false; // jContent가 시작되었는지 확인하는 플래그
+      // 빈칸이나 URL을 건너뛰고, 그 후의 텍스트를 jContent에 저장
+          while (currentIndex < columns.length && (columns[currentIndex].trim() === '' || columns[currentIndex].trim().startsWith('http'))) {
+        currentIndex++;
+      }
 
-          // columns[7]부터 시작하여 빈칸이나 URL을 만날 때까지 값 버리기
-          while (currentIndex < columns.length) {
-            let currentValue = columns[currentIndex].trim();
-
-            // 빈칸이나 URL을 만날 때까지 계속해서 값 버리기
-            if (currentValue === '' || currentValue.startsWith('https')) {
-              currentIndex++; // 빈칸이나 URL을 만나면 넘기기
-              continue;
-            }
-
-            // 첫 번째 텍스트 값부터 jContent에 저장 (새로 시작)
-            if (!foundJContent) {
-              jContent = currentValue; // 첫 번째 텍스트 값을 jContent에 저장
-              foundJContent = true; // jContent 시작
-            } else {
-              // 첫 번째 텍스트 이후의 값도 이어서 저장
-              jContent += ' ' + currentValue;
-            }
-
-            currentIndex++; // 계속 진행
-          }
+      // J열에 해당하는 데이터 저장
+      while (currentIndex < columns.length && columns[currentIndex].trim() !== '' && !columns[currentIndex].trim().startsWith('http')) {
+        jContent += columns[currentIndex].trim() + ' ';
+        currentIndex++;
+      }
 
           // K열: 빈칸이나 URL을 찾고 그 다음의 값을 kContent로 저장
           let kContent = '';
