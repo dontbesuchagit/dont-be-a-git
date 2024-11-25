@@ -1,103 +1,69 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>구글 스프레드시트 데이터</title>
-  <style>
-    .data-list {
-      list-style-type: none;
-      padding: 0;
-    }
-    .data-list li {
-      margin-bottom: 20px;
-    }
-    .author {
-      color: blue;
-      font-weight: bold;
-    }
-    img {
-      max-width: 100%;
-      height: auto;
-      display: block;
-    }
-  </style>
-</head>
-<body>
-  <h1>구글 스프레드시트 데이터</h1>
-  <p id="data">불러오는 중...</p>
+const processData = (data) => {
+    const result = [];
 
-  <ul class="data-list" id="data-list"></ul>
+    // 데이터를 한 줄씩 처리
+    for (let i = 0; i < data.length; i++) {
+        let row = data[i];
+        let columns = row.split(',');
 
-  <script>
-    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
-      .then(response => response.text())
-      .then(data => {
-        // CSV 데이터를 행 단위로 나누기
-        const rows = data.split('\n');
+        // 텍스트를 H, I, J, K열에 따라 나누어 저장
+        let h = '';
+        let i = '';
+        let j = '';
+        let k = '';
 
-        // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
-        let list = document.getElementById('data-list');
-        
-        // "불러오는 중..." 텍스트 제거
-        document.getElementById('data').style.display = 'none';
+        let idx = 7; // column[7]부터 시작
 
-        // 데이터를 1부터 시작 (헤더는 제외하고)
-        for (let i = 1; i < rows.length - 1; i++) {
-          const columns = rows[i].split(',');
-
-          // H열 (columns[7] -> 8번째 열)
-          let contentText = columns[7].trim();  // H열 텍스트
-
-          // I열 (https로 시작하거나 빈칸일 수 있음)
-          let iContent = [];
-          let currentIndex = 8;
-          while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('http') || columns[currentIndex].trim() === "")) {
-            if (columns[currentIndex].trim().startsWith('http')) {
-              iContent.push(columns[currentIndex].trim());
+        // H열 처리 (column[7]부터 column[8]까지 텍스트가 나오면)
+        while (idx < columns.length) {
+            let col = columns[idx].trim();
+            if (col === '' || col.startsWith('https')) {
+                break; // I열로 넘어감
             }
-            currentIndex++;
-          }
-
-          // J열 (무조건 텍스트)
-          let placeText = columns[currentIndex].trim();
-          currentIndex++;  // J열 다음으로 이동
-
-          // K열 (https로 시작하거나 빈칸일 수 있음)
-          let kContent = [];
-          while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('http') || columns[currentIndex].trim() === "")) {
-            if (columns[currentIndex].trim().startsWith('http')) {
-              kContent.push(columns[currentIndex].trim());
-            }
-            currentIndex++;
-          }
-
-          // 리스트 항목 생성
-          let listItem = document.createElement('li');
-
-          // H열 출력
-          listItem.innerHTML += `<p class="author">H열: ${contentText}</p>`;
-          
-          // I열 이미지 출력
-          iContent.forEach((url, index) => {
-            listItem.innerHTML += `<p>이미지${index + 1} (I열): <img src="${url}" alt="이미지${index + 1}" /></p>`;
-          });
-
-          // J열 출력
-          listItem.innerHTML += `<p class="author">J열: ${placeText}</p>`;
-
-          // K열 이미지 출력
-          kContent.forEach((url, index) => {
-            listItem.innerHTML += `<p>이미지${index + 1} (K열): <img src="${url}" alt="이미지${index + 1}" /></p>`;
-          });
-
-          list.appendChild(listItem);
+            h += col + ' '; // H열에 텍스트가 나오면 추가 (띄어쓰기 포함)
+            idx++;
         }
-      })
-      .catch(error => {
-        document.getElementById('data').textContent = '데이터를 불러오는 중 오류가 발생했습니다.';
-        console.error('Error:', error);
-      });
-  </script>
-</body>
-</html>
+
+        // I열 처리 (https가 나오면 I열로 넘어감)
+        if (idx < columns.length && columns[idx].startsWith('https')) {
+            i = columns[idx].trim();
+            idx++;
+        }
+
+        // J열 처리 (https가 나오지 않으면 J열로 넘어감)
+        while (idx < columns.length) {
+            let col = columns[idx].trim();
+            if (col === '' || col.startsWith('https')) {
+                break; // K열로 넘어감
+            }
+            j += col + ' '; // J열에 텍스트가 나오면 추가 (띄어쓰기 포함)
+            idx++;
+        }
+
+        // K열 처리 (https가 나오면 K열로 추가)
+        if (idx < columns.length && columns[idx].startsWith('https')) {
+            k = columns[idx].trim();
+        }
+
+        // 결과에 저장
+        result.push({
+            h: h.trim(), // 불필요한 공백 제거
+            i: i.trim(),
+            j: j.trim(),
+            k: k.trim()
+        });
+    }
+
+    return result;
+};
+
+// 예시 데이터
+const data = [
+    "A,B,C,D,E,F,G,흑백요리사,https://example1.com,,이븐하게 익혀지는 요리들이 내 마음을 울렸어",
+    "A,B,C,D,E,F,G,봄봄! 또 갈래,https://example2.com,,정성껏 준비한 밥상",
+    "A,B,C,D,E,F,G,소박한 맛,https://example3.com,,편안한 집밥",
+    "A,B,C,D,E,F,G,너무 맛있어서 울었어,,모든 음식이 내 마음을 울렸어"
+];
+
+const processedData = processData(data);
+console.log(processedData);
