@@ -84,10 +84,12 @@
           listItem.innerHTML += `<p class="author">${dContent}의 24년도 최고의 콘텐츠는 ${hContent.trim()}</p>`;
 
           
-          // I열 URL 출력 (이미지)
-          iContent.forEach((url, index) => {
-            listItem.innerHTML += `<p>이미지${index + 1} (I열): <a href="${url}" target="_blank">${url}</a></p>`;
-          });
+          // I열 URL이나 텍스트 출력 (이미지로 표시)
+          if (iContent.startsWith('https')) {
+            listItem.innerHTML += `<p>I열 이미지: <img src="${iContent}" alt="I열 Image"></p>`;
+          } else {
+            listItem.innerHTML += `<p>I열 텍스트: ${kContent.trim()}</p>`;
+          }
 
           // J열 텍스트 출력
           if (jContent) {
