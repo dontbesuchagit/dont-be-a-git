@@ -19,6 +19,7 @@
     img {
       max-width: 100%;
       height: auto;
+      display: block;
     }
   </style>
 </head>
@@ -49,38 +50,43 @@
           const author = columns[3];  // D열은 4번째 열
           
           // H열 값 (텍스트) - 반드시 텍스트
-          const textContent = columns[7];  // H열은 8번째 열
+          let textContent = columns[7];  // H열은 8번째 열
           
-          // I열 값 (이미지 URL)
+          // I열 값 (이미지 URL) 또는 텍스트 처리
           let imageUrls = [];
           let tempImageUrl = columns[8];  // I열은 9번째 열
-          
-          // I열 값 처리: 빈칸일 경우는 이미지를 추가하지 않음
           if (tempImageUrl && (tempImageUrl.startsWith('http') || tempImageUrl === '')) {
-            imageUrls.push(tempImageUrl);
+            imageUrls.push(tempImageUrl);  // I열이 https 또는 빈칸인 경우 이미지 URL로 처리
+          } else {
+            textContent += ` ${tempImageUrl}`;  // I열이 텍스트인 경우 H열 텍스트에 합침
           }
 
-          // J열 값 (텍스트)
-          const nextTextContent = columns[9];  // J열은 10번째 열
+          // J열 값 (텍스트) - 텍스트
+          let nextTextContent = columns[9];  // J열은 10번째 열
 
-          // K열 값 (이미지 URL)
+          // K열 값 (이미지 URL) 또는 텍스트 처리
           let nextImageUrl = columns[10];  // K열은 11번째 열
           if (nextImageUrl && (nextImageUrl.startsWith('http') || nextImageUrl === '')) {
-            imageUrls.push(nextImageUrl);
+            imageUrls.push(nextImageUrl);  // K열이 https 또는 빈칸인 경우 이미지 URL로 처리
+          } else {
+            nextTextContent += ` ${nextImageUrl}`;  // K열이 텍스트인 경우 J열 텍스트에 합침
           }
 
           // 출력 형식으로 "author", "textContent", "imageUrls" 표시
           const listItem = document.createElement('li');
           
           // 첫 번째 줄 (H열, I열 이미지)
-          listItem.innerHTML = `"${author}"의 24년도 최고의 콘텐츠는 "${textContent}"<br/>`;
+          listItem.innerHTML = `<strong>작성자: </strong>${author}<br/>
+                                <strong>작성 시간: </strong>${columns[2]}<br/>
+                                <strong>글 내용: </strong>"${textContent}"<br/>`;
           imageUrls.forEach(url => {
             listItem.innerHTML += `<img src="${url}" alt="Image"><br/>`;
           });
 
           // 두 번째 줄 (J열, K열 이미지)
-          listItem.innerHTML += `"${author}"의 24년도 최고의 장소는 "${nextTextContent}"<br/>`;
-          if (nextImageUrl) {
+          listItem.innerHTML += `<strong>작성자: </strong>${author}<br/>
+                                 <strong>24년도 최고의 장소는: </strong>"${nextTextContent}"<br/>`;
+          if (nextImageUrl && nextImageUrl.startsWith('http')) {
             listItem.innerHTML += `<img src="${nextImageUrl}" alt="Image"><br/>`;
           } else {
             listItem.innerHTML += `이미지 없음<br/>`;
