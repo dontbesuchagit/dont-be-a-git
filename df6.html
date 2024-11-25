@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>구plz터</title>
+  <title>임시</title>
   <style>
     .data-list {
       list-style-type: none;
@@ -16,10 +16,14 @@
       color: blue;
       font-weight: bold;
     }
+    img {
+      max-width: 200px; /* 이미지 크기를 제한 */
+      height: auto;
+    }
   </style>
 </head>
 <body>
-  <h1>구글 스프레드시트 데이터</h1>
+  <h1>데이터 파싱하는 게 가장 힘들구나 휴</h1>
   <p id="data">불러오는 중...</p>
 
   <ul class="data-list" id="data-list"></ul>
@@ -38,7 +42,7 @@
         document.getElementById('data').style.display = 'none';
 
         // 데이터를 1부터 시작 (헤더는 제외하고)
-        for (let i = 1; i < rows.length - 1; i++) {
+        for (let i = 1; i < rows.length; i++) {
           const columns = rows[i].split(',');
 
           // D열: columns[3] 값 (D열 콘텐츠)
@@ -76,11 +80,9 @@
           // 리스트 항목 생성
           let listItem = document.createElement('li');
 
-          // "D열"의 24년도 최고의 콘텐츠는 D열 콘텐츠 출력
-          listItem.innerHTML += `<p class="author">${dContent}의 24년도 최고의 콘텐츠는</p>`;
+          // "D열"의 24년도 최고의 콘텐츠는 H열 텍스트 출력
+          listItem.innerHTML += `<p class="author">${dContent}의 24년도 최고의 콘텐츠는 ${hContent.trim()}</p>`;
 
-          // H열 텍스트 출력
-          listItem.innerHTML += `<p>H열 텍스트: ${hContent.trim()}</p>`;
           
           // I열 URL 출력 (이미지)
           iContent.forEach((url, index) => {
@@ -92,11 +94,9 @@
             listItem.innerHTML += `<p>J열 텍스트: ${jContent}</p>`;
           }
 
-          // K열 URL이나 텍스트 출력
+          // K열 URL이나 텍스트 출력 (이미지로 표시)
           if (kContent.startsWith('https')) {
-            listItem.innerHTML += `<p>K열 URL: <a href="${kContent}" target="_blank">${kContent}</a></p>`;
-          } else if (kContent === '') {
-            listItem.innerHTML += `<p>K열: 빈칸</p>`;
+            listItem.innerHTML += `<p>K열 이미지: <img src="${kContent}" alt="K열 Image"></p>`;
           } else {
             listItem.innerHTML += `<p>K열 텍스트: ${kContent.trim()}</p>`;
           }
