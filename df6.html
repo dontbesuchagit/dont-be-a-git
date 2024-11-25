@@ -75,27 +75,27 @@
           // 24년도 최고의 콘텐츠: H열 + I열
           let contentHTML = `"${contentText}"`;
           if (iContent.length > 0) {
-            contentHTML += `, "${iContent.join('", "')}"`;
+            contentHTML += `, ${iContent.map(url => `"${url}"`).join(', ')}`;
           }
           contentHTML = `"j"의 24년도 최고의 콘텐츠는 ${contentHTML} 입니다.`;
 
           // 24년도 최고의 장소: J열 + K열
           let placeHTML = `"${placeText}"`;
           if (kContent.length > 0) {
-            placeHTML += `, "${kContent.join('", "')}"`;
+            placeHTML += `, ${kContent.map(url => `"${url}"`).join(', ')}`;
           }
           placeHTML = `"j"의 24년도 최고의 장소는 ${placeHTML} 입니다.`;
 
           // 이미지를 I열에서 처리
           let imagesHTMLI = '';
-          iContent.forEach(url => {
-            imagesHTMLI += `<img src="${url}" alt="이미지" />`;
+          iContent.forEach((url, index) => {
+            imagesHTMLI += `<img src="${url}" alt="이미지${index + 1}" />`;  // "이미지1", "이미지2" 형태로
           });
 
           // 이미지를 K열에서 처리
           let imagesHTMLK = '';
-          kContent.forEach(url => {
-            imagesHTMLK += `<img src="${url}" alt="이미지" />`;
+          kContent.forEach((url, index) => {
+            imagesHTMLK += `<img src="${url}" alt="이미지${index + 1}" />`;  // "이미지1", "이미지2" 형태로
           });
 
           // 리스트 항목 생성
