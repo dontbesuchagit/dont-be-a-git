@@ -23,37 +23,50 @@
   </style>
 </head>
 <body>
-  <h1>구글 스프레드시트 데이터</h1>
+  <h1>test</h1>
   <p id="data">불러오는 중...</p>
 
   <ul class="data-list" id="data-list"></ul>
 
   <script>
-    // PapaParse 라이브러리 사용
-fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=tsv')
-  .then(response => response.text())
-  .then(data => {
-    // PapaParse로 TSV 데이터를 파싱
-    Papa.parse(data, {
-      complete: function(results) {
-        console.log(results);  // 결과 확인 (디버깅용)
+    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
+      .then(response => response.text())
+      .then(data => {
+        // CSV 데이터를 행 단위로 나누기
+        const rows = data.split('\n');
 
-        // 파싱된 데이터의 각 행 처리
+        // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
         let list = document.getElementById('data-list');
         
         // "불러오는 중..." 텍스트 제거
         document.getElementById('data').style.display = 'none';
 
-        // 데이터 시작 (헤더 제외)
-        for (let i = 1; i < results.data.length; i++) {
-          const row = results.data[i];
+        // 데이터를 1부터 시작 (헤더는 제외하고)
+        for (let i = 1; i < rows.length - 1; i++) {
+          // 행을 처리할 때, 큰따옴표로 감싼 부분도 제대로 처리하도록
+          const columns = parseCSVLine(rows[i]);
 
           // D열 값 (작성자)
-          const dValue = row[3];  // D열은 4번째 열 (인덱스 3)
+          const dValue = columns[3];  // D열은 4번째 열
           // H열 값 (글자)
-          const hValue = row[7];  // H열은 8번째 열 (인덱스 7)
+          let hValue = columns[7];  // H열은 8번째 열
           // I열 값 (이미지 URL)
-          const iValue = row[8];  // I열은 9번째 열 (인덱스 8)
+          let iValue = columns[8];  // I열은 9번째 열
+          
+          // I열에 https로 시작하는 URL이나 빈칸이 아닌 값이 있을 때, 그 값을 I열로 처리하고
+          // 그 이전 값들은 모두 H열로 합쳐야 한다
+          let j = 8; // I열부터 시작
+          while (j < columns.length && (columns[j] && !columns[j].startsWith('http') && columns[j].trim() !== '')) {
+            hValue += ", " + columns[j]; // https나 빈칸이 아닌 경우 계속해서 H열로 합친다
+            j++;
+          }
+          
+          // 그 이후에 https로 시작하는 URL이 나오면 I열로 처리
+          if (j < columns.length && (columns[j].startsWith('http') || columns[j].startsWith('https'))) {
+            iValue = columns[j]; // I열에 유효한 이미지 URL을 할당
+          } else {
+            iValue = ''; // I열이 비어있거나 잘못된 값이라면 비워두기
+          }
 
           // D열 (작성자) 리스트 항목 생성
           const listItemD = document.createElement('li');
@@ -86,17 +99,23 @@ fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9K
             const urlDisplay = document.createElement('p');
             urlDisplay.innerText = `이미지 URL: ${decodedURL}`;
             list.appendChild(urlDisplay);
-          } else {
-            // 만약 URL이 아니면, 그 값을 출력하지 않도록 처리
-            console.log("I열에 URL이 없습니다.");
+          } else if (!iValue || iValue.trim() === '') {
+            // I열이 비어 있으면 그 값을 출력하지 않음
+            console.log("I열에 이미지 URL이 없습니다.");
           }
         }
-      }
-    });
-  })
-  .catch(error => console.error('Error fetching data: ', error));
+      })
+      .catch(error => console.error('Error fetching data: ', error));
 
-
+    // CSV 한 줄을 처리하는 함수
+    function parseCSVLine(line) {
+      // 큰따옴표로 묶인 값에 대해 처리를 해주는 정규식 사용
+      const regex = /(?:,|\n)(?=(?:[^"]*"[^"]*")*[^"]*$)/g;
+      const result = line.match(/(".*?"|[^",\n]*)(?=\s*,|\s*$)/g).map(item => {
+        return item.replace(/(^"|"$)/g, '');  // 큰따옴표 제거
+      });
+      return result;
+    }
   </script>
 </body>
 </html>
