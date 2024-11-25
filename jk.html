@@ -19,7 +19,7 @@
   </style>
 </head>
 <body>
-  <h1>22 휴</h1>
+  <h1>222 휴</h1>
   <p id="data">불러오는 중...</p>
 
   <ul class="data-list" id="data-list"></ul>
@@ -48,12 +48,12 @@ fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9K
       let jContent = '';
       let currentIndex = 7; // J열은 columns[7]부터 시작
 
-      // 빈칸이나 URL을 건너뛰고, 그 후의 텍스트를 jContent에 저장
+      // 빈칸이나 URL을 건너뛰고 그 후의 텍스트를 jContent에 저장
       while (currentIndex < columns.length && (columns[currentIndex].trim() === '' || columns[currentIndex].trim().startsWith('http'))) {
         currentIndex++;
       }
 
-      // J열에 해당하는 데이터 저장
+      // 빈칸이나 URL이 아닌 텍스트가 나올 때부터 jContent에 저장
       while (currentIndex < columns.length && columns[currentIndex].trim() !== '' && !columns[currentIndex].trim().startsWith('http')) {
         jContent += columns[currentIndex].trim() + ' ';
         currentIndex++;
@@ -87,6 +87,7 @@ fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9K
       list.appendChild(listItem);
     }
   });
+
 
   </script>
 </body>
