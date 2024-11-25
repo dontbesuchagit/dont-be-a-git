@@ -26,7 +26,7 @@
 
   <script>
     // 각 항목에 고유한 색상을 지정
-    const colors = ['red', 'blue', 'green', 'purple', 'orange', 'pink', 'yellow', 'brown', 'teal', 'gray'];
+    const colors = ['yellow', 'red', 'blue', 'green', 'purple', 'orange', 'pink', 'brown', 'teal', 'gray', 'black'];
 
     fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
       .then(response => response.text())
@@ -84,7 +84,7 @@
 
           // I열 URL이나 텍스트 출력 (이미지로 표시)
           if (iContent.startsWith('https')) {
-            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">I열 이미지: <img src="${iContent}" alt="I열 Image"></p>`;
+            listItem.innerHTML += `<img src="${iContent}" alt="I열 Image">`;
           } 
 
           // J열 텍스트 출력
@@ -94,7 +94,7 @@
 
           // K열 URL이나 텍스트 출력 (이미지로 표시)
           if (kContent.startsWith('https')) {
-            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">K열 이미지: <img src="${kContent}" alt="K열 Image"></p>`;
+            listItem.innerHTML += `<img src="${kContent}" alt="K열 Image">`;
           }
 
           list.appendChild(listItem);
