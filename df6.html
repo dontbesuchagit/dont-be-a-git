@@ -41,33 +41,33 @@
         for (let i = 1; i < rows.length - 1; i++) {
           const columns = rows[i].split(',');
 
-          // H열 처리 (column[7])
+          // D열: columns[3] 값 (D열 콘텐츠)
+          let dContent = columns[3].trim(); // D열 값 저장
+
+          // H열: columns[7]부터 시작 (https나 빈칸이 나올 때까지 텍스트 추가)
           let hContent = '';
-          let iContent = [];
-          let jContent = '';
-          let kContent = [];
-
-          let currentIndex = 7;  // H열은 7번째 열부터 시작
-
-          // H열: 텍스트를 계속 추가하고, https나 빈칸이 나오면 I열로 넘어감
+          let currentIndex = 7;
           while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
             hContent += columns[currentIndex].trim() + ' ';
             currentIndex++;
           }
 
           // I열: https URL이 나오면 I열에 저장
+          let iContent = [];
           while (currentIndex < columns.length && columns[currentIndex].trim().startsWith('https')) {
             iContent.push(columns[currentIndex].trim());
             currentIndex++;
           }
 
-          // J열: I열 이후에는 텍스트만 문자로 추가
+          // J열: I열 이후, https URL이 나오지 않으면 텍스트만 J열에 추가
+          let jContent = '';
           while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
             jContent += columns[currentIndex].trim() + ' ';
             currentIndex++;
           }
 
-          // K열: https URL이 나오면 K열에 해당 URL을 추가
+          // K열: https URL이 나오면 K열에 저장
+          let kContent = [];
           while (currentIndex < columns.length && columns[currentIndex].trim().startsWith('https')) {
             kContent.push(columns[currentIndex].trim());
             currentIndex++;
@@ -75,6 +75,9 @@
 
           // 리스트 항목 생성
           let listItem = document.createElement('li');
+
+          // D열 (column[3]) 값 출력
+          listItem.innerHTML += `<p class="author">D열: ${dContent}</p>`;
 
           // H열 텍스트 출력
           listItem.innerHTML += `<p class="author">H열: ${hContent.trim()}</p>`;
