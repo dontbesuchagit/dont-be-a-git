@@ -1,49 +1,113 @@
-// 반복문을 통해 데이터를 처리하는 예시
-let currentIndex = 0;
-let jContent = ''; // J열에 저장될 텍스트
-let kContent = ''; // K열에 저장될 텍스트
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>구plz터</title>
+  <style>
+    .data-list {
+      list-style-type: none;
+      padding: 0;
+    }
+    .data-list li {
+      margin-bottom: 20px;
+    }
+    .author {
+      color: blue;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>구글 스프레드시트 데이터</h1>
+  <p id="data">불러오는 중...</p>
 
-// H열: 텍스트를 계속 추가하고, https나 빈칸이 나오면 I열로 넘어감
-while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
-    hContent += columns[currentIndex].trim() + ' ';
-    currentIndex++;
-}
+  <ul class="data-list" id="data-list"></ul>
 
-// I열: https URL이 나오면 I열에 저장
-while (currentIndex < columns.length && columns[currentIndex].trim().startsWith('https')) {
-    iContent.push(columns[currentIndex].trim());
-    currentIndex++;
-}
+  <script>
+    fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
+      .then(response => response.text())
+      .then(data => {
+        // CSV 데이터를 행 단위로 나누기
+        const rows = data.split('\n');
 
-// J열: https가 포함된 텍스트는 J열에, 없으면 빈칸
-if (currentIndex < columns.length && columns[currentIndex].trim().startsWith('https')) {
-    jContent = columns[currentIndex].trim();
-    currentIndex++; // J열에 URL이 있을 경우 넘어가도록 설정
-} else {
-    jContent = ''; // URL이 없으면 빈칸으로 설정
-}
+        // 불러온 데이터 확인 (헤더와 첫 번째 데이터부터 시작)
+        let list = document.getElementById('data-list');
+        
+        // "불러오는 중..." 텍스트 제거
+        document.getElementById('data').style.display = 'none';
 
-// K열: J열 이후 텍스트는 K열에 저장
-while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
-    kContent += columns[currentIndex].trim() + ' ';
-    currentIndex++;
-}
+        // 데이터를 1부터 시작 (헤더는 제외하고)
+        for (let i = 1; i < rows.length - 1; i++) {
+          const columns = rows[i].split(',');
 
-// 리스트 항목 생성
-let listItem = document.createElement('li');
+          // D열: columns[3] 값 (D열 콘텐츠)
+          let dContent = columns[3].trim(); // D열 값 저장
 
-// H열 텍스트 출력
-listItem.innerHTML += `<p class="author">H열: ${hContent.trim()}</p>`;
+          // H열: columns[7]부터 시작 (https나 빈칸이 나올 때까지 텍스트 추가)
+          let hContent = '';
+          let currentIndex = 7;
+          while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
+            hContent += columns[currentIndex].trim() + ' ';
+            currentIndex++;
+          }
 
-// I열 URL 출력
-iContent.forEach((url, index) => {
-    listItem.innerHTML += `<p>이미지${index + 1} (I열): ${url}</p>`;
-});
+          // I열: https URL이 나오면 I열에 저장
+          let iContent = [];
+          while (currentIndex < columns.length && columns[currentIndex].trim().startsWith('https')) {
+            iContent.push(columns[currentIndex].trim());
+            currentIndex++;
+          }
 
-// J열 텍스트 출력
-listItem.innerHTML += `<p class="author">J열: ${jContent.trim()}</p>`;
+          // J열: I열 URL 이후의 텍스트만 저장
+          let jContent = '';
+          if (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https')) {
+            jContent = columns[currentIndex].trim();
+            currentIndex++;
+          }
 
-// K열 텍스트 출력
-listItem.innerHTML += `<p>이미지 (K열): ${kContent.trim()}</p>`;
+          // K열: J열 텍스트 이후 https URL이나 빈칸이 있으면 그 값 저장
+          let kContent = '';
+          while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('https') || columns[currentIndex].trim() === '')) {
+            kContent = columns[currentIndex].trim();
+            currentIndex++;
+          }
 
-list.appendChild(listItem);
+          // 리스트 항목 생성
+          let listItem = document.createElement('li');
+
+          // "D열"의 24년도 최고의 콘텐츠는 D열 콘텐츠 출력
+          listItem.innerHTML += `<p class="author">${dContent}의 24년도 최고의 콘텐츠는</p>`;
+
+          // H열 텍스트 출력
+          listItem.innerHTML += `<p>H열 텍스트: ${hContent.trim()}</p>`;
+          
+          // I열 URL 출력 (이미지)
+          iContent.forEach((url, index) => {
+            listItem.innerHTML += `<p>이미지${index + 1} (I열): <a href="${url}" target="_blank">${url}</a></p>`;
+          });
+
+          // J열 텍스트 출력
+          if (jContent) {
+            listItem.innerHTML += `<p>J열 텍스트: ${jContent}</p>`;
+          }
+
+          // K열 URL이나 텍스트 출력
+          if (kContent.startsWith('https')) {
+            listItem.innerHTML += `<p>K열 URL: <a href="${kContent}" target="_blank">${kContent}</a></p>`;
+          } else if (kContent === '') {
+            listItem.innerHTML += `<p>K열: 빈칸</p>`;
+          } else {
+            listItem.innerHTML += `<p>K열 텍스트: ${kContent.trim()}</p>`;
+          }
+
+          list.appendChild(listItem);
+        }
+      })
+      .catch(error => {
+        document.getElementById('data').textContent = '데이터를 불러오는 중 오류가 발생했습니다.';
+        console.error('Error:', error);
+      });
+  </script>
+</body>
+</html>
