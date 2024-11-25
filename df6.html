@@ -3,36 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>구글 스프레드시트 D1:D6과 F1:F6 값</title>
+  <title>구글 스프레드시트 값</title>
+  <style>
+    ul {
+      list-style-type: none; /* 불렛 포인트 제거 */
+      padding: 0;           /* 리스트 패딩 제거 */
+    }
+    li {
+      margin: 5px 0;        /* 리스트 간격 추가 */
+    }
+  </style>
 </head>
 <body>
-  <h1>구글 스프레드시트 D1:D6과 F1:F6 값:</h1>
+  <h1>구글 스프레드시트 값</h1>
   <ul id="data">불러오는 중...</ul>
   
   <script>
     fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vS51SDANoy5EhKuTDgyn_Z_9KTC-_0X8V_H5dGi7bWpmuuSZF2yDbw517p_EDKMD5Ic3iK5TjNC19Al/pub?output=csv')
       .then(response => response.text())
       .then(data => {
-        // CSV 데이터를 행 단위로 나누기
-        const rows = data.split('\n');
+        const rows = data.split('\n'); // CSV 데이터를 행 단위로 나누기
+        const list = document.getElementById('data'); // 데이터가 들어갈 리스트 요소 선택
 
-        // D1:D6 (3번째 열), F1:F6 (5번째 열) 값을 가져오기
-        const list = document.getElementById('data');
-        for (let i = 0; i < 6; i++) { // D1:D6은 0~5번째 행
-          const dValue = rows[i].split(',')[3]; // D 열 값 (index 3)
-          const fValue = rows[i].split(',')[7]; // F 열 값 (index 5)
+        // 기존 "불러오는 중..." 텍스트 제거
+        list.innerHTML = '';
 
-          // 리스트에 D, F 값 추가
+        // D1:D6 및 F1:F6 값을 반복적으로 추가
+        for (let i = 0; i < 6; i++) {
+          const dValue = rows[i].split(',')[3]; // D 열 데이터 (4번째 열)
+          const fValue = rows[i].split(',')[5]; // F 열 데이터 (6번째 열)
+          
+          // 작성자 (D 열 값) 추가
           const listItemD = document.createElement('li');
           listItemD.innerText = `작성자: ${dValue}`;
           list.appendChild(listItemD);
 
+          // F 열 값 추가
           const listItemF = document.createElement('li');
           listItemF.innerText = `${fValue}`;
           list.appendChild(listItemF);
         }
       })
-      .catch(error => console.error('Error fetching data: ', error));
+      .catch(error => {
+        // 데이터 로드 실패 시 오류 표시
+        console.error('Error fetching data: ', error);
+        document.getElementById('data').innerText = '데이터를 불러오는 데 실패했습니다.';
+      });
   </script>
 </body>
 </html>
