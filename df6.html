@@ -57,16 +57,15 @@
           }
 
           // I열: https URL이 나오면 I열에 저장
-          let iContent = [];
-          while (currentIndex < columns.length && columns[currentIndex].trim().startsWith('https')) {
-            iContent.push(columns[currentIndex].trim());
+          while (currentIndex < columns.length && (columns[currentIndex].trim().startsWith('https') || columns[currentIndex].trim() === '')) {
+            iContent = columns[currentIndex].trim();
             currentIndex++;
           }
 
           // J열: I열 URL 이후의 텍스트만 저장
           let jContent = '';
-          if (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https')) {
-            jContent = columns[currentIndex].trim();
+          while (currentIndex < columns.length && !columns[currentIndex].trim().startsWith('https') && columns[currentIndex].trim() !== '') {
+            jContent += columns[currentIndex].trim() + ' ';
             currentIndex++;
           }
 
