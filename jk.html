@@ -19,7 +19,7 @@
   </style>
 </head>
 <body>
-  <h1>데이터 파싱하는 게 가장 힘들구나2 휴</h1>
+  <h1>jk 휴</h1>
   <p id="data">불러오는 중...</p>
 
   <ul class="data-list" id="data-list"></ul>
@@ -51,18 +51,28 @@
           let jContent = '';
           let currentIndex = 7;
           
-          // 빈칸이나 URL이 아닌 데이터를 패스하고, 그 뒤부터 jContent로 저장
+          // 빈칸이나 URL을 만날 때까지 값을 버리고 그 이후의 값만 jContent로 저장
+          let foundJContent = false; // jContent가 시작되었는지 확인하는 플래그
+
+          // columns[7]부터 시작하여 빈칸이나 URL을 만날 때까지 값 버리기
           while (currentIndex < columns.length) {
             let currentValue = columns[currentIndex].trim();
 
-            // 빈칸이나 URL이 아니면 종료
+            // 빈칸이나 URL을 만날 때까지 계속해서 값 버리기
             if (currentValue === '' || currentValue.startsWith('https')) {
-              currentIndex++;
-              continue; // 빈칸이나 URL을 건너뛰기
+              currentIndex++; // 빈칸이나 URL을 만나면 넘기기
+              continue;
             }
-            
-            // jContent에 텍스트를 추가
-            jContent += currentValue + ' ';
+
+            // 첫 번째 텍스트 값부터 jContent에 저장
+            if (!foundJContent) {
+              jContent = currentValue; // 첫 번째 텍스트 값을 jContent에 저장
+              foundJContent = true; // jContent 시작
+            } else {
+              // 첫 번째 텍스트 이후의 값은 계속 추가
+              jContent += ' ' + currentValue;
+            }
+
             currentIndex++; // 계속 진행
           }
 
@@ -75,7 +85,7 @@
           // 리스트 항목 생성
           let listItem = document.createElement('li');
 
-        
+    
           // J열 텍스트 출력
           if (jContent) {
             listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">${dContent}의 24년도 최고의 공간은 ${jContent.trim()}</p>`;
@@ -84,9 +94,7 @@
           // K열 URL 처리
           if (kContent.startsWith('https')) {
             listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">K열 이미지: <img src="${kContent}" alt="K열 Image"></p>`;
-          } else {
-            listItem.innerHTML += `<p style="color: ${colors[i % colors.length]};">K열 텍스트: ${kContent.trim()}</p>`;
-          }
+          } 
 
           list.appendChild(listItem);
         }
